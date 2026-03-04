@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Pre-Sale Actions -->
+    <record id="action_incoming_query" model="ir.actions.act_window">
+        <field name="name">Incoming Query</field>
+        <field name="res_model">crm.lead</field>
+        <field name="domain">[('type', 'in', ['lead', 'opportunity']), ('is_presale', '=', True)]</field>
+        <field name="context">{'default_type': 'lead', 'default_is_presale': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No incoming queries yet!
+            </p>
+            <p>
+                Incoming queries from potential clients will appear here.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_incoming_query_view_list" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_incoming_query_list"/>
+        <field name="act_window_id" ref="action_incoming_query"/>
+    </record>
+
+    <record id="action_incoming_query_view_kanban" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="view_incoming_query_kanban"/>
+        <field name="act_window_id" ref="action_incoming_query"/>
+    </record>
+
+    <record id="action_incoming_query_view_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="3"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_incoming_query_form"/>
+        <field name="act_window_id" ref="action_incoming_query"/>
+    </record>
+
+    <record id="action_lead_pipeline" model="ir.actions.act_window">
+        <field name="name">Lead Pipeline</field>
+        <field name="res_model">crm.lead</field>
+        <field name="domain">[('type', '=', 'opportunity'), ('is_presale', '=', True)]</field>
+        <field name="context">{'default_type': 'opportunity', 'default_is_presale': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No leads in the pipeline yet!
+            </p>
+            <p>
+                Track and manage your leads through the sales pipeline.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_lead_pipeline_view_list" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_lead_pipeline_list"/>
+        <field name="act_window_id" ref="action_lead_pipeline"/>
+    </record>
+
+    <record id="action_lead_pipeline_view_kanban" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="view_lead_pipeline_kanban"/>
+        <field name="act_window_id" ref="action_lead_pipeline"/>
+    </record>
+
+    <record id="action_lead_pipeline_view_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="3"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_custom_lead_pipeline_form"/>
+        <field name="act_window_id" ref="action_lead_pipeline"/>
+    </record>
+
+    <!-- Pre-Sale Menus -->
+    <menuitem
+        id="crm_menu_pre_sale"
+        name="Pre Sale"
+        parent="crm.crm_menu_root"
+        sequence="15"
+        groups="sales_team.group_sale_salesman,sales_team.group_sale_manager"/>
+
+    <menuitem
+        id="menu_incoming_query"
+        name="Incoming Query"
+        parent="crm_menu_pre_sale"
+        action="action_incoming_query"
+        sequence="1"/>
+
+    <menuitem
+        id="menu_lead_pipeline"
+        name="Lead Pipeline"
+        parent="crm_menu_pre_sale"
+        action="action_lead_pipeline"
+        sequence="2"/>
+
+</odoo>
