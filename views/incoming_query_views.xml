@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Incoming Query Views -->
+    <record id="view_incoming_query_list" model="ir.ui.view">
+        <field name="name">beto.crm.incoming.query.list</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">1000</field>
+        <field name="arch" type="xml">
+            <list string="Incoming Queries" default_order="id desc">
+                <field name="id" string="ID"/>
+                <field name="entry_date" string="Date"/>
+                <field name="user_id" string="User Name"/>
+                <field name="incoming_query_method_id" string="Method" widget="badge" options="{'color_field': 'method_color'}"/>
+                <field name="partner_id" string="Client User Name"/>
+                <field name="amount" string="Amount $" widget="monetary" options="{'currency_field': 'company_currency'}"/>
+                <field name="platform_source_id" string="Platform"/>
+                <field name="profile_id" string="Profile"/>
+                <field name="lead_status_id" string="Status" widget="badge" options="{'color_field': 'status_color'}"/>
+                <field name="quote_html" string="Quote Link" widget="html"/>
+                <field name="project_category_id" string="Project Category"/>
+                <field name="note" string="Note"/>
+                <field name="job_link" string="Job Link" widget="url" text="Inbox"/>
+                <field name="conversion_status" string="Conversion Status" widget="badge" 
+                       decoration-info="conversion_status == 'query'" 
+                       decoration-success="conversion_status == 'converted'"/>
+                
+                <field name="method_color" column_invisible="True"/>
+                <field name="status_color" column_invisible="True"/>
+                <field name="company_currency" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_incoming_query_kanban" model="ir.ui.view">
+        <field name="name">beto.crm.incoming.query.kanban</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">1000</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="incoming_query_method_id" class="o_kanban_small_column">
+                <field name="id"/>
+                <field name="entry_date"/>
+                <field name="user_id"/>
+                <field name="incoming_query_method_id"/>
+                <field name="partner_id"/>
+                <field name="lead_status_id"/>
+                <field name="amount"/>
+                <field name="project_category_id"/>
+                <field name="conversion_status"/>
+                <field name="status_color"/>
+                <field name="company_currency"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted fw-bold">
+                                <i class="fa fa-calendar-o me-1"/>
+                                <field name="entry_date"/>
+                            </small>
+                            <field name="conversion_status" widget="badge"
+                                   decoration-info="conversion_status == 'query'"
+                                   decoration-success="conversion_status == 'converted'"/>
+                        </div>
+
+                        <div class="fw-bold fs-6 mb-1">
+                            <i class="fa fa-user me-1 text-primary"/>
+                            <field name="partner_id"/>
+                        </div>
+
+                        <div class="text-muted small mb-2">
+                            <i class="fa fa-user-circle me-1"/>
+                            <field name="user_id"/>
+                        </div>
+
+                        <div class="mb-2">
+                            <field name="lead_status_id" widget="badge"
+                                   options="{'color_field': 'status_color'}"/>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-1">
+                            <span class="fw-bold text-success">
+                                <i class="fa fa-usd me-1"/>
+                                <field name="amount" widget="monetary"
+                                       options="{'currency_field': 'company_currency'}"/>
+                            </span>
+                            <field name="project_category_id"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_incoming_query_form" model="ir.ui.view">
+        <field name="name">beto.crm.incoming.query.form</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="priority">1000</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="replace">
+                <header>
+                    <button string="Create Lead" type="object" name="action_create_lead_from_query" class="btn-primary"
+                            invisible="conversion_status == 'converted'"/>
+                    <button string="Back" type="object" name="action_incoming_query_back" class="btn-secondary"/>
+                </header>
+            </xpath>
+
+            <xpath expr="//sheet" position="replace">
+                <sheet>
+                    <group>
+                        <group string="Query Information">
+                            <field name="id" string="ID" readonly="1" invisible="not id"/>
+                            <field name="entry_date" string="Date of Entry" readonly="1"/>
+                            <field name="user_id" string="User Name" readonly="1"/>
+                            <field name="incoming_query_method_id" string="Method" required="1"/>
+                            <field name="partner_id" string="Client User Name"
+                                 context="{'res_partner_search_mode': 'customer'}"
+                                 options="{'no_create': False}" required="1"/>
+                            <field name="amount" string="Amount" required="1"/>
+                        </group>
+                        <group string="">
+                            <field name="lead_status_id" string="Status" domain="[('is_lead_pipeline', '=', False)]" required="1"/>
+                            <field name="project_category_id" string="Project Category" required="1"/>
+                            <field name="quote_link" string="Quote Link"/>
+                            <field name="quote_display_text" string="Quote Link Display Text"/>
+                            <field name="job_link" string="Job Link" required="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Notes" name="incoming_notes">
+                            <field name="note" placeholder="Add notes about this query..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
